@@ -9,7 +9,33 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ReceiptPDF from "@/components/receiptPdf";
 
-const banks = ["Access Bank", "GTBank", "Zenith Bank", "First Bank", "UBA"];
+const banks = [
+    "Access Bank", 
+    "GTBank", 
+    "Zenith Bank", 
+    "First Bank", 
+    "UBA", 
+    "FCMB", 
+    "Union Bank", 
+    "Sterling Bank", 
+    "Fidelity Bank", 
+    "EcoBank", 
+    "Polaris Bank", 
+    "Wema Bank", 
+    "Heritage Bank", 
+    "Jaiz Bank", 
+    "Keystone Bank",
+    "Stanbic IBTC Bank",
+    "Unity Bank",
+    
+    // ✅ Fintech Banks
+    "Opay",
+    "Kuda Bank",
+    "PalmPay",
+    "Moniepoint",
+    "Rubies Bank",
+    "VFD Microfinance Bank",
+];
 
 const formSchema = z.object({
     accountNumber: z.string().length(10, "Account number must be 10 digits"),
