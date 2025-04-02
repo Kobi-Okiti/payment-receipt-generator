@@ -146,7 +146,7 @@ export default function AdminDashboard() {
                                         <td className="p-3">
                                             <Button
                                                 onClick={() => deleteUser(user.email)}
-                                                className="bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-all"
+                                                className="!bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600 transition-all"
                                             >
                                                 Delete
                                             </Button>
@@ -189,7 +189,7 @@ export default function AdminDashboard() {
                                             {transaction.status !== 'verified' && (
                                                 <Button
                                                     onClick={() => handleVerify(transaction.transactionId)}
-                                                    className="bg-blue-600 text-white py-2 px-4 rounded hover:bg-blue-700 transition-all"
+                                                    className=" text-white rounded !bg-black !text-[12px] md:!text-[16px] lg:!text-[16px]"
                                                 >
                                                     Verify Payment
                                                 </Button>
@@ -203,7 +203,7 @@ export default function AdminDashboard() {
                                                 </Button>
                                             )}
                                             <Button
-                                                className="bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 transition-all"
+                                                className=" text-white rounded !bg-black !text-[12px] md:!text-[16px] lg:!text-[16px]"
                                                 onClick={() => handleViewReceipt(transaction.transactionId)}
                                             >
                                                 View Receipt
