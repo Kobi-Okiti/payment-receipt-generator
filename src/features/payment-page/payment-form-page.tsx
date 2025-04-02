@@ -8,26 +8,27 @@ import { Form, FormField, FormItem, FormLabel, FormMessage } from "@/components/
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ReceiptPDF from "@/components/receiptPdf";
+import { useNavigate } from "react-router-dom";
 
 const banks = [
-    "Access Bank", 
-    "GTBank", 
-    "Zenith Bank", 
-    "First Bank", 
-    "UBA", 
-    "FCMB", 
-    "Union Bank", 
-    "Sterling Bank", 
-    "Fidelity Bank", 
-    "EcoBank", 
-    "Polaris Bank", 
-    "Wema Bank", 
-    "Heritage Bank", 
-    "Jaiz Bank", 
+    "Access Bank",
+    "GTBank",
+    "Zenith Bank",
+    "First Bank",
+    "UBA",
+    "FCMB",
+    "Union Bank",
+    "Sterling Bank",
+    "Fidelity Bank",
+    "EcoBank",
+    "Polaris Bank",
+    "Wema Bank",
+    "Heritage Bank",
+    "Jaiz Bank",
     "Keystone Bank",
     "Stanbic IBTC Bank",
     "Unity Bank",
-    
+
     // ✅ Fintech Banks
     "Opay",
     "Kuda Bank",
@@ -41,6 +42,8 @@ const formSchema = z.object({
     accountNumber: z.string().length(10, "Account number must be 10 digits"),
     bank: z.string().min(1, "Please select a bank"),
     accountName: z.string().min(1, "Account name is required"),
+    userName: z.string().min(1, "user name is required"),
+    email: z.string().email("Invalid email address"),
     amount: z.string().min(1, "Amount is required"),
 });
 
@@ -48,9 +51,12 @@ interface FormDataType {
     accountNumber: string;
     bank: string;
     accountName: string;
+    userName: string;
+    email: string;
     amount: string;
     timestamp: string;
     transactionId: string;
+    status: string; // Add status field
 }
 
 export default function PaymentFormPage() {
@@ -58,6 +64,9 @@ export default function PaymentFormPage() {
     const [isProcessing, setIsProcessing] = useState(false);
     const [receipt, setReceipt] = useState<FormDataType | null>(null);
     const [paymentHistory, setPaymentHistory] = useState<FormDataType[]>([]);
+
+    const navigate = useNavigate();
+    const isAdmin = localStorage.getItem("isAdmin") === "true";
 
 
     const form = useForm({
@@ -67,6 +76,8 @@ export default function PaymentFormPage() {
             bank: "",
             accountName: "",
             amount: "",
+            userName: "",
+            email: "",
         },
     });
 
@@ -85,7 +96,7 @@ export default function PaymentFormPage() {
         return "TXN-" + Math.floor(1000000000 + Math.random() * 9000000000);
     };
 
-    const onSubmit = (values: Omit<FormDataType, "timestamp" | "transactionId">) => {
+    const onSubmit = (values: Omit<FormDataType, "timestamp" | "transactionId" | "status">) => {
         setIsProcessing(true);
 
         setTimeout(() => {
@@ -94,6 +105,7 @@ export default function PaymentFormPage() {
                 ...values,
                 timestamp: new Date().toLocaleString(),
                 transactionId: generateTransactionId(),
+                status: "pending",
             };
             setReceipt(newReceipt);
 
@@ -128,7 +140,7 @@ export default function PaymentFormPage() {
                     <p className=" mt-[10px] text-sm text-gray-500">Generating your receipt...</p>
                 </div>
             ) : receipt ? (
-                <div className="w-full md:min-w-md lg:min-w-md mx-auto p-2 md:p-6 bg-white rounded-lg shadow-lg">
+                <div className="w-full md:max-w-md lg:max-w-md mx-auto p-2 md:p-6 bg-white rounded-lg shadow-lg">
                     <div className="flex justify-center mb-4 w-full">
                         <div className="w-16 h-16 flex items-center justify-center bg-green-600 rounded-full animate-bounce">
                             <i className="success-icon text-white size-[35px]" />
@@ -152,6 +164,14 @@ export default function PaymentFormPage() {
                             <span className="text-gray-700">{receipt.bank}</span>
                         </p>
                         <p className="flex justify-between">
+                            <span className="font-medium">Name:</span>
+                            <span className="text-gray-700">{receipt.userName}</span>
+                        </p>
+                        <p className="flex justify-between">
+                            <span className="font-medium">Email:</span>
+                            <span className="text-gray-700">{receipt.email}</span>
+                        </p>
+                        <p className="flex justify-between">
                             <span className="font-medium">Account Name:</span>
                             <span className="text-gray-700">{receipt.accountName}</span>
                         </p>
@@ -163,30 +183,36 @@ export default function PaymentFormPage() {
                             <span className="font-medium">Transaction Date:</span>
                             <span className="text-gray-700">{receipt.timestamp}</span>
                         </p>
+                        <p className="flex justify-between">
+                            <span className="font-medium">Status:</span>
+                            <span className={`text-${receipt.status === "pending" ? "yellow" : "green"}-600 font-bold`}>
+                                {receipt.status}
+                            </span>
+                        </p>
                     </div>
                     <div className="mt-4 w-full flex flex-row items-center gap-[5px]">
-                    <PDFDownloadLink document={<ReceiptPDF receipt={receipt} />} fileName={`Receipt_${receipt.transactionId}.pdf`} className="w-1/2">
-                        {({ loading }) => (
-                            <Button className="h-[50px] text-white rounded !bg-black !text-[12px] md:!text-[16px] lg:!text-[16px] w-full">
-                                {loading ? "Generating PDF..." : "Download Receipt"}
-                            </Button>
-                        )}
-                    </PDFDownloadLink>
-                    <Button
-                        className="h-[50px] w-1/2 text-white rounded !bg-black !text-[12px] md:!text-[16px] lg:!text-[16px]"
-                        onClick={() => {
-                            setReceipt(null);  // Clear receipt
-                            setAccountName(""); // Reset account name
-                            form.reset();       // Reset form fields
-                        }}
-                    >
-                        Make Another Payment
-                    </Button>
+                        <PDFDownloadLink document={<ReceiptPDF receipt={receipt} />} fileName={`Receipt_${receipt.transactionId}.pdf`} className="w-1/2">
+                            {({ loading }) => (
+                                <Button className="h-[50px] text-white rounded !bg-black !text-[12px] md:!text-[16px] lg:!text-[16px] w-full">
+                                    {loading ? "Generating PDF..." : "Download Receipt"}
+                                </Button>
+                            )}
+                        </PDFDownloadLink>
+                        <Button
+                            className="h-[50px] w-1/2 text-white rounded !bg-black !text-[12px] md:!text-[16px] lg:!text-[16px]"
+                            onClick={() => {
+                                setReceipt(null);  // Clear receipt
+                                setAccountName(""); // Reset account name
+                                form.reset();       // Reset form fields
+                            }}
+                        >
+                            Make Another Payment
+                        </Button>
                     </div>
-                    
+
                 </div>
             ) : (
-                <div className="w-full md:min-w-md lg:min-w-md mx-auto p-6 bg-white shadow-lg rounded-lg">
+                <div className="w-full md:max-w-md lg:max-w-md mx-auto p-6 bg-white shadow-lg rounded-lg">
                     <h2 className="text-lg font-semibold mb-4">Make a Payment</h2>
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -260,6 +286,31 @@ export default function PaymentFormPage() {
                                     </FormItem>
                                 )}
                             />
+                            {/* User info */}
+                            <FormField
+                                control={form.control}
+                                name="userName"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Name</FormLabel>
+                                        <Input {...field} type="text" placeholder="Enter your name" />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
+
+                            {/* Email info */}
+                            <FormField
+                                control={form.control}
+                                name="email"
+                                render={({ field }) => (
+                                    <FormItem>
+                                        <FormLabel>Email</FormLabel>
+                                        <Input {...field} type="email" placeholder="Enter your email" />
+                                        <FormMessage />
+                                    </FormItem>
+                                )}
+                            />
 
                             {/* Submit Button */}
                             <Button type="submit" disabled={isProcessing} className="!text-white h-[50px] !bg-black">
@@ -282,6 +333,21 @@ export default function PaymentFormPage() {
                         )}
                     </div>
                 </div>
+            )}
+            {isAdmin ? (
+                <button
+                    onClick={() => navigate("/admin-dashboard")}
+                    className="max-sm:hidden fixed bottom-6 right-6 p-3 bg-blue-600 text-white rounded-full shadow-lg"
+                >
+                    Admin Panel
+                </button>
+            ) : (
+                <button
+                    onClick={() => navigate("/admin-login")}
+                    className="max-sm:hidden fixed bottom-6 right-6 p-3 bg-gray-600 text-white rounded-full shadow-lg"
+                >
+                    Admin Login
+                </button>
             )}
         </>
     );

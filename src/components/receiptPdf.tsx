@@ -8,6 +8,8 @@ type ReceiptProps = {
       accountName: string;
       amount: string;
       timestamp: string;
+      userName: string;
+      email: string;
     };
   };
 
@@ -42,6 +44,14 @@ const ReceiptPDF: React.FC<ReceiptProps> = ({ receipt }) => (
                 <View style={styles.section}>
                     <Text style={styles.label}>Bank:</Text>
                     <Text>{receipt.bank}</Text>
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Name:</Text>
+                    <Text>{receipt.userName}</Text>
+                </View>
+                <View style={styles.section}>
+                    <Text style={styles.label}>Email:</Text>
+                    <Text>{receipt.email}</Text>
                 </View>
                 <View style={styles.section}>
                     <Text style={styles.label}>Account Name:</Text>
