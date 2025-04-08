@@ -43,7 +43,7 @@ export default function AdminLogin() {
           onChange={(e) => setCredentials({ ...credentials, password: e.target.value })}
         />
         {error && <p className="text-red-500 mt-2">{error}</p>}
-        <Button className="mt-4 w-full" onClick={handleLogin}>
+        <Button className="mt-4 w-full !bg-black" onClick={handleLogin}>
           Login
         </Button>
       </div>

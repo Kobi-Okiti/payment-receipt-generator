@@ -82,15 +82,15 @@ export default function AdminDashboard() {
             {/* Header */}
             <header className="bg-blue-600 text-white p-4 flex justify-between items-center">
                 <h1 className="!text-[20px] font-bold">Admin Dashboard</h1>
-                <button
+                <Button
                     onClick={() => {
                         localStorage.removeItem("isAdmin");
                         navigate("/");
                     }}
-                    className="bg-red-500 px-4 py-2 rounded"
+                    className="!bg-black px-4 py-2 rounded"
                 >
                     Logout
-                </button>
+                </Button>
             </header>
 
             {/* Sidebar & Main Content */}
