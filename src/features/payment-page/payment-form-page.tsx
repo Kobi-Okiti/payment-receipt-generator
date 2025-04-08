@@ -335,19 +335,19 @@ export default function PaymentFormPage() {
                 </div>
             )}
             {isAdmin ? (
-                <button
+                <Button
                     onClick={() => navigate("/admin-dashboard")}
-                    className="max-sm:hidden fixed bottom-6 right-6 p-3 bg-blue-600 text-white rounded-full shadow-lg"
+                    className="max-sm:hidden fixed bottom-6 right-6 p-3 !bg-black text-white rounded-full shadow-lg"
                 >
                     Admin Panel
-                </button>
+                </Button>
             ) : (
-                <button
+                <Button
                     onClick={() => navigate("/admin-login")}
-                    className="max-sm:hidden fixed bottom-6 right-6 p-3 bg-gray-600 text-white rounded-full shadow-lg"
+                    className="max-sm:hidden fixed bottom-6 right-6 p-3 !bg-black text-white rounded-full shadow-lg"
                 >
                     Admin Login
-                </button>
+                </Button>
             )}
         </>
     );
